@@ -1,14 +1,9 @@
-import os
-import sys
-
 from celery import Celery
 from celery.schedules import crontab
 from loguru import logger
 
 from app.settings import Settings
 from managers.config_manager import ConfigManager
-
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 settings = Settings()
 BROKER_URL = str(settings.redis_dsn)
