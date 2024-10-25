@@ -1,0 +1,15 @@
+version: "3.9"
+
+services:
+  celery:
+    restart: always
+    build: .
+    command: sh start_celery.sh
+    volumes:
+      - .:/app
+      - "${DUMPS_FOLDER}:/app/dumps"
+    depends_on:
+      - redis
+  redis:
+    restart: always
+    image: redis:6.0.10-alpine

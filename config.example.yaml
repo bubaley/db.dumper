@@ -1,0 +1,34 @@
+ssh:
+  - name: example_ssh_name
+    host: 127.0.0.1
+    port: 22
+    username: root
+    password: root
+s3:
+  - name: example_s3_name
+    url: https://s3.example.com
+    bucket: bucket
+    region: ru-1
+    access_key: cb46446
+    secret_key: 00b5c7a0b9a26cec8b92d5897275ef7d
+    root: dumps
+configs:
+  - settings:
+      name: app
+      ssh_name: example_ssh_name
+      s3_name: example_s3_name
+      schedule:
+        active: true
+        minute: 0
+        hour: 0
+        day_of_week: '*'
+        day_of_month: '*'
+        month_of_year: '*'
+    database:
+      type: postgres
+      host: localhost
+      port: 5432
+      name: postgres
+      user: postgres
+      password: postgres
+      docker_container: container-db-1
