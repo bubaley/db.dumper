@@ -7,7 +7,7 @@ from loguru import logger
 
 from functions.get_dump_command import get_dump_command
 from functions.get_paths import get_config_dump_folder_path, get_dump_filename
-from managers.config_manager import Config
+from managers.config_manager import Config, ConfigManager
 
 
 @dataclass
@@ -73,7 +73,14 @@ class SSHManager:
         ssh_connection = paramiko.SSHClient()
         ssh_connection.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         ssh = self.config.ssh
-        ssh_connection.connect(hostname=ssh.host, port=ssh.port, username=ssh.username, password=ssh.password)
+        params = {'hosname': ssh.host, 'port': ssh.port, 'username': ssh.username}
+        if ssh.private_key:
+            private_key_path = str(Path(ConfigManager.get_ssh_keys_folder_path(), ssh.private_key))
+            params['pkey'] = paramiko.RSAKey.from_private_key_file(private_key_path)
+        else:
+            params['password'] = ssh.password
+
+        ssh_connection.connect(**params)
         logger.info({'event': 'SSH_CONNECTED', 'config': self.config.name, 'host': ssh.host})
         return ssh_connection
 

@@ -4,6 +4,7 @@ ssh:
     port: 22
     username: root
     password: root
+    ssh_key: id_ed25519
 s3:
   - name: example_s3_name
     url: https://s3.example.com

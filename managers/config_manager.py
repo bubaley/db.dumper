@@ -59,6 +59,7 @@ class ConfigManager:
         ssh_by_names = {v.name: v for v in self.specification.ssh}
         s3_by_names = {v.name: v for v in self.specification.s3}
         configs: list[Config] = []
+        ssh_keys_path = self.get_ssh_keys_folder_path()
         for el in self.specification.configs:
             if el.s3:
                 el.settings.s3_name = None
@@ -72,6 +73,9 @@ class ConfigManager:
                 el.ssh = ssh_by_names.get(el.settings.ssh_name)
                 if not el.ssh:
                     errors.append(f'Config "{el.name}" has invalid ssh_name "{el.settings.ssh_name}"')
+            if el.ssh and el.ssh.private_key:
+                if not os.path.exists(Path(ssh_keys_path, el.ssh.private_key)):
+                    errors.append(f'Config "{el.name}" has invalid ssh private_key "{el.ssh.private_key}"')
             configs.append(el)
         if errors:
             _text = 'Invalid configs\n' + '\n'.join(errors)
@@ -80,6 +84,10 @@ class ConfigManager:
 
     def get_config_by_name(self, name: str):
         return self._config_by_names.get(name) or None
+
+    @staticmethod
+    def get_ssh_keys_folder_path():
+        return str(Path(Path(__file__).parent.parent, 'ssh_keys'))
 
     @staticmethod
     def get_dumps_folder_path():

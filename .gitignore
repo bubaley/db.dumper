@@ -147,3 +147,4 @@ dump.rdb
 celerybeat-schedule.db
 dumps
 config.yaml
+ssh_keys
