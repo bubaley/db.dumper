@@ -45,7 +45,7 @@ class ConfigManager:
 
     @staticmethod
     def _prepare_specification():
-        config_path = Path(Path(__file__).parent, '../config.yaml')
+        config_path = Path(Path(__file__).parent.parent, 'config.yaml')
         with open(config_path) as file:
             yaml_result = yaml.safe_load(file) or {}
             try:
