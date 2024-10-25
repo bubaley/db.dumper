@@ -81,6 +81,7 @@ class SSHManager:
                 data = {'event': 'SSH_INVALID_PRIVATE_KEY', 'config': self.config.name}
                 logger.error(data)
                 raise ValueError(data)
+            params['pkey'] = pkey
         else:
             params['password'] = ssh.password
 
