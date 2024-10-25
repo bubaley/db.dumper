@@ -8,6 +8,7 @@ from loguru import logger
 from functions.get_dump_command import get_dump_command
 from functions.get_paths import get_config_dump_folder_path, get_dump_filename
 from managers.config_manager import Config, ConfigManager
+from models.ssh_connection import ConfigSSHConnection
 
 
 @dataclass
@@ -73,10 +74,13 @@ class SSHManager:
         ssh_connection = paramiko.SSHClient()
         ssh_connection.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         ssh = self.config.ssh
-        params = {'hosname': ssh.host, 'port': ssh.port, 'username': ssh.username}
+        params = {'hostname': ssh.host, 'port': ssh.port, 'username': ssh.username}
         if ssh.private_key:
-            private_key_path = str(Path(ConfigManager.get_ssh_keys_folder_path(), ssh.private_key))
-            params['pkey'] = paramiko.RSAKey.from_private_key_file(private_key_path)
+            pkey = self._get_pkey_data(ssh)
+            if not pkey:
+                data = {'event': 'SSH_INVALID_PRIVATE_KEY', 'config': self.config.name}
+                logger.error(data)
+                raise ValueError(data)
         else:
             params['password'] = ssh.password
 
@@ -108,3 +112,14 @@ class SSHManager:
             stdout=stdout.read().decode(),
             stderr=stderr.read().decode(),
         )
+
+    @staticmethod
+    def _get_pkey_data(ssh_config: ConfigSSHConnection):
+        private_key_path = str(Path(ConfigManager.get_ssh_keys_folder_path(), ssh_config.private_key))
+        _check_keys = [paramiko.RSAKey, paramiko.Ed25519Key, paramiko.DSSKey, paramiko.ECDSAKey]
+        for el in _check_keys:
+            try:
+                return el.from_private_key_file(private_key_path, password=ssh_config.passphrase)
+            except paramiko.SSHException:
+                pass
+        return None
