@@ -22,7 +22,6 @@ export class SSHConnection implements BaseModel {
   privateKey: string;
   passphrase: string;
   type: string;
-  usePassphrase
 
   constructor(raw: SSHConnectionRaw) {
     this.id = raw.id;
