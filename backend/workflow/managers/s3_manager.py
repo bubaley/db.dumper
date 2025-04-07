@@ -66,8 +66,14 @@ class S3Manager:
         prefix = self.get_s3_path(self.workflow.filename)
         response = self._client.list_objects_v2(Bucket=self._s3.bucket, Prefix=prefix)
         if 'Contents' in response:
-            key = response['Contents'][0]['Key']
-            return f'{self._s3.url}/{self._s3.bucket}/{key}'
+            return self._client.generate_presigned_url(
+                'get_object',
+                Params={
+                    'Bucket': self._s3.bucket,
+                    'Key': prefix
+                },
+                ExpiresIn=7200
+            )
         return None
 
     def _connect(self):
