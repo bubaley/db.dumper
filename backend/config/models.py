@@ -3,6 +3,11 @@ from django.db import models
 
 
 class SSHConnection(models.Model):
+    class Type(models.TextChoices):
+        PASSWORD = 'password'
+        PRIVATE_KEY = 'private_key'
+        PRIVATE_KEY_WITH_PASSPHRASE = 'private_key_with_passphrase'
+
     name = models.CharField(max_length=255)
     host = models.CharField(max_length=255)
     username = models.CharField(max_length=255)
@@ -10,6 +15,7 @@ class SSHConnection(models.Model):
     password = CryptoField(null=True)
     private_key = CryptoField(null=True)
     passphrase = CryptoField(null=True)
+    type = models.CharField(max_length=32, default=Type.PASSWORD, choices=Type.choices)
 
 
 class S3Connection(models.Model):

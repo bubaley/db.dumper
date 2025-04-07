@@ -9,6 +9,7 @@ export type SSHConnectionRaw = {
   password?: string | null;
   private_key?: string;
   passphrase?: string;
+  type?: string;
 };
 
 export class SSHConnection implements BaseModel {
@@ -20,6 +21,8 @@ export class SSHConnection implements BaseModel {
   username: string;
   privateKey: string;
   passphrase: string;
+  type: string;
+  usePassphrase
 
   constructor(raw: SSHConnectionRaw) {
     this.id = raw.id;
@@ -30,6 +33,7 @@ export class SSHConnection implements BaseModel {
     this.password = raw.password || "";
     this.privateKey = raw.private_key || "";
     this.passphrase = raw.passphrase || "";
+    this.type = raw.type || "";
   }
 
   toJson(): Record<string, any> {
@@ -41,6 +45,7 @@ export class SSHConnection implements BaseModel {
       password: this.password || undefined,
       private_key: this.privateKey || undefined,
       passphrase: this.passphrase || undefined,
+      type: this.type,
     };
   }
 }

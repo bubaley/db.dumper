@@ -38,12 +38,12 @@ class ConfigViewSet(viewsets.ModelViewSet):
     def build(self, request, **kwargs):
         instance = self.get_object()
         workflows = Workflow.objects.filter(status__in=Workflow.ACTIVE_STATUSES)
-        if workflows.filter(config=instance).exists():
-            raise ValidationError({'workflow': ['Already in progress.']})
+        # if workflows.filter(config=instance).exists():
+        #     raise ValidationError({'workflow': ['Already in progress.']})
         workflow = WorkflowEventManager.build_workflow(
             config=instance,
             user=request.user if request.user.is_authenticated else None,
         )
         data = WorkflowSerializer(workflow).data
-        workflow_init.delay(config_key=instance.key, workflow_id=workflow.id)
+        workflow_init(config_key=instance.key, workflow_id=workflow.id)
         return Response(data)

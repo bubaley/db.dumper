@@ -1,5 +1,7 @@
+import io
 import os
 from dataclasses import dataclass
+from io import StringIO
 from pathlib import Path
 
 import paramiko
@@ -80,7 +82,7 @@ class SSHManager:
         ssh_connection.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         ssh = self.config.ssh_connection
         params = {'hostname': ssh.host, 'port': ssh.port, 'username': ssh.username}
-        if ssh.private_key:
+        if ssh.type == SSHConnection.Type.PRIVATE_KEY:
             pkey = self._get_pkey_data(ssh)
             if not pkey:
                 self._e.add_event(name='SSH_INVALID_PRIVATE_KEY', is_error=True)
@@ -118,11 +120,14 @@ class SSHManager:
 
     @staticmethod
     def _get_pkey_data(ssh_config: SSHConnection):
-        # private_key_path = str(Path(ConfigManager.get_ssh_keys_folder_path(), ssh_config.private_key))
         _check_keys = [paramiko.RSAKey, paramiko.Ed25519Key, paramiko.DSSKey, paramiko.ECDSAKey]
         for el in _check_keys:
+            key_file = io.StringIO(ssh_config.private_key.strip())
             try:
-                return el.from_private_key(ssh_config.private_key, password=ssh_config.passphrase)
-            except paramiko.SSHException:
-                pass
+                _password = (
+                    ssh_config.passphrase if ssh_config.type == SSHConnection.Type.PRIVATE_KEY_WITH_PASSPHRASE else None
+                )
+                return el.from_private_key(key_file, password=_password)
+            except Exception:
+                continue
         return None

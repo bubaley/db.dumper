@@ -103,10 +103,13 @@ const build = async () => {
           <InputNumber id="on_label" v-model="configRepo.item.maxVersions" />
           <label for="on_label">Количество версий</label>
         </FloatLabel>
-          <div class="flex items-center gap-4">
-              <ToggleSwitch v-model="configRepo.item.autoBuild" aria-label="asdsad" />
-              Автоматический режим
-          </div>
+        <div class="flex items-center gap-4">
+          <ToggleSwitch
+            v-model="configRepo.item.autoBuild"
+            aria-label="asdsad"
+          />
+          Автоматический режим
+        </div>
         <div class="my-4">Подключение к базе данных</div>
         <SelectButton
           v-model="configRepo.item.databaseConnection.type"
@@ -206,9 +209,7 @@ const build = async () => {
         class="mb-3"
         width="86px"
       ></Skeleton>
-      <DataTable
-        :value="workflowEventRepo.items"
-      >
+      <DataTable :value="workflowEventRepo.items">
         <Column field="name" header="Шаг"></Column>
         <Column field="isError" header="Ошибка"></Column>
         <Column

@@ -17,7 +17,7 @@ class CryptoSerializer(AirModelSerializer):
 class SSHConnectionSerializer(CryptoSerializer):
     class Meta:
         model = SSHConnection
-        fields = ('id', 'name', 'host', 'username', 'port', 'password', 'private_key', 'passphrase')
+        fields = ('id', 'name', 'host', 'username', 'port', 'password', 'private_key', 'passphrase', 'type')
 
 
 class S3ConnectionSerializer(CryptoSerializer):
@@ -45,7 +45,16 @@ class ConfigSerializer(AirModelSerializer):
 
     class Meta:
         model = Config
-        fields = ('id', 'name', 'key', 'max_versions', 'database_connection', 'ssh_connection', 's3_connection', 'auto_build')
+        fields = (
+            'id',
+            'name',
+            'key',
+            'max_versions',
+            'database_connection',
+            'ssh_connection',
+            's3_connection',
+            'auto_build',
+        )
         action_read_only_fields = {'update': ('key',)}
 
     def update_or_create(self, instance, validated_data):
