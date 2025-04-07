@@ -2,6 +2,7 @@ from celery import shared_task
 
 from config.models import Config
 from core.celery.celery_enums import CeleryTasks
+from core.utils.logger import Logg
 from workflow.managers.dump_manager import DumpManager
 from workflow.managers.workflow_event_manager import WorkflowEventManager
 from workflow.models import Workflow
@@ -21,3 +22,16 @@ def workflow_init(**kwargs):
     else:
         workflow = WorkflowEventManager.build_workflow(config)
     DumpManager(workflow).process()
+
+
+@shared_task(name=CeleryTasks.CONFIG_BUILD)
+def config_build(**kwargs):
+    active_configs = Workflow.objects.filter(status__in=Workflow.ACTIVE_STATUSES).values_list('config', flat=True)
+    configs = Config.objects.filter(auto_build=True).exclude(id__in=active_configs)
+    Logg.info(e='config.build', msg=f'Got {len(configs)} configs')
+    for config in configs:
+        workflow = WorkflowEventManager.build_workflow(
+            config=config,
+            user=None,
+        )
+        workflow_init.delay(config_key=config.key, workflow_id=workflow.id)

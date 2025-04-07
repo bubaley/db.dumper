@@ -1,3 +1,5 @@
+from celery.schedules import crontab
+
 from core.celery.celery_enums import CeleryTaskQueues, CeleryTasks
 from core.settings import common
 
@@ -15,10 +17,10 @@ task_routes = {
 }
 
 beat_schedule = {
-    # 'example': {
-    #     'task': CeleryTasks.USER_EXAMPLE,
-    #     'schedule': 5,
-    # },
+    'example': {
+        'task': CeleryTasks.CONFIG_BUILD,
+        'schedule': crontab(hour=4, minute=0),
+    },
 }
 
 task_queues = {

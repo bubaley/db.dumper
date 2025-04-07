@@ -12,6 +12,8 @@ class Workflow(models.Model):
         FAILED = 'failed'
         DONE = 'done'
 
+    ACTIVE_STATUSES = [Status.CREATED, Status.IN_PROGRESS]
+
     filename = models.CharField(max_length=255, null=True)
     config = models.ForeignKey('config.Config', on_delete=models.CASCADE, related_name='workflows')
     status = models.CharField(max_length=32, choices=Status.choices, default=Status.CREATED, db_index=True)

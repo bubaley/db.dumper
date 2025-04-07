@@ -11,7 +11,7 @@ class WorkflowViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Workflow.objects.all()
     serializer_class = WorkflowSerializer
     filterset_fields = ('config',)
-    # permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
     @action(methods=['GET'], detail=True)
     def url(self, request, **kwargs):
@@ -24,4 +24,4 @@ class WorkflowEventViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = WorkflowEvent.objects.all()
     serializer_class = WorkflowEventSerializer
     filterset_fields = ('workflow',)
-    # permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
