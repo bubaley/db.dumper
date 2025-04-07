@@ -1,4 +1,4 @@
-import { Authentication, AuthenticationRaw } from './auth'
+import { Authentication, type AuthenticationRaw } from './auth'
 import {BaseModelApi} from "../../corexModels/apiModels/baseModelApi.ts";
 
 export class AuthenticationApi extends BaseModelApi<Authentication> {
