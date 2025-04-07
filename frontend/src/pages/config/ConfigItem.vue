@@ -99,16 +99,6 @@ const build = async () => {
           />
           <label for="on_label">SSH Подключение</label>
         </FloatLabel>
-        <FloatLabel
-          variant="on"
-          v-if="configRepo.item.databaseConnection.type === 'postgres'"
-        >
-          <InputNumber
-            id="on_label"
-            v-model="configRepo.item.databaseConnection.port"
-          />
-          <label for="on_label">Порт</label>
-        </FloatLabel>
         <FloatLabel variant="on">
           <InputNumber id="on_label" v-model="configRepo.item.maxVersions" />
           <label for="on_label">Количество версий</label>
@@ -218,7 +208,6 @@ const build = async () => {
       ></Skeleton>
       <DataTable
         :value="workflowEventRepo.items"
-        @row-click="loadWorkflowHistory($event.data)"
       >
         <Column field="name" header="Шаг"></Column>
         <Column field="isError" header="Ошибка"></Column>
