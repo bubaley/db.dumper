@@ -1,4 +1,4 @@
-import {S3Connection, S3ConnectionRaw} from './s3Connection.ts';
+import {S3Connection, type S3ConnectionRaw} from './s3Connection.ts';
 import {BaseModelApi} from "../../corexModels/apiModels/baseModelApi.ts";
 
 

@@ -30,6 +30,12 @@ class DatabaseConnectionSerializer(CryptoSerializer):
     class Meta:
         model = DatabaseConnection
         fields = ('id', 'type', 'db', 'host', 'port', 'user', 'password')
+        extra_kwargs = {
+            'user': {'required': False},
+            'password': {'required': False},
+            'host': {'required': False},
+            'port': {'required': False},
+        }
 
 
 class ConfigSerializer(AirModelSerializer):
@@ -39,7 +45,7 @@ class ConfigSerializer(AirModelSerializer):
 
     class Meta:
         model = Config
-        fields = ('id', 'name', 'key', 'max_versions', 'database_connection', 'ssh_connection', 's3_connection')
+        fields = ('id', 'name', 'key', 'max_versions', 'database_connection', 'ssh_connection', 's3_connection', 'auto_build')
         action_read_only_fields = {'update': ('key',)}
 
     def update_or_create(self, instance, validated_data):

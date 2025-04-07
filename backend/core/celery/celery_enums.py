@@ -9,4 +9,3 @@ class CeleryTaskQueues(enum.StrEnum):
 
 class CeleryTasks(enum.StrEnum):
     WORKFLOW_INIT = 'workflow.init'
-    USER_EXAMPLE = 'user.example'

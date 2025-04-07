@@ -1,4 +1,4 @@
-import {BaseModel} from "../../corexModels/apiModels/baseModel.ts";
+import {type BaseModel} from "../../corexModels/apiModels/baseModel.ts";
 
 export type WorkflowEventRaw = {
     id?: number | undefined

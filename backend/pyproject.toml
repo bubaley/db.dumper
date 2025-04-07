@@ -1,41 +1,43 @@
 [project]
-name = "app"
+name = "dumper"
 version = "0.1.0"
 description = ""
-requires-python = "==3.12.*"
+requires-python = "==3.13.*"
 dependencies = [
     "air-drf-relation>=0.6.1",
-    "celery>=5.4.0",
-    "django>=5.1.2",
-    "django-cors-headers>=4.5.0",
-    "django-environ>=0.11.2",
+    "boto3==1.35.51",
+    "celery>=5.5.0",
+    "cryptography>=44.0.2",
+    "django-cors-headers>=4.7.0",
+    "django-environ>=0.12.0",
+    "django-extensions>=3.2.3",
     "django-filter>=24.3",
+    "django>=5.1.2",
+    "djangorestframework-simplejwt>=5.5.0",
     "djangorestframework>=3.15.2",
-    "djangorestframework-simplejwt>=5.3.1",
     "gunicorn>=23.0.0",
-    "loguru>=0.7.2",
-    "psycopg[binary]>=3.2.3",
-    "redis>=5.2.0",
+    "loguru>=0.7.3",
+    "paramiko>=3.5.1",
+    "psycopg[binary]>=3.2.6",
+    "redis>=5.2.1",
     "requests>=2.32.3",
-    "sentry-sdk>=2.17.0",
-    "cryptography>=43.0.3",
-    "boto3>=1.35.49",
+    "sentry-sdk>=2.25.1",
 ]
 
 [dependency-groups]
 dev = [
     "pre-commit>=4.0.1",
-    "ruff>=0.7.1",
+    "ruff>=0.11.4",
 ]
 
 [tool.pyupgrade]
-py312-plus = true
+py313-plus = true
 
 [tool.ruff]
 fix = true
 line-length = 120
 indent-width = 4
-target-version = "py312"
+target-version = "py313"
 
 [tool.ruff.lint]
 extend-select = ["I"]

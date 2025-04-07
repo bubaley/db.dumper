@@ -14,13 +14,13 @@ from .serializers import ConfigSerializer, DatabaseConnectionSerializer, S3Conne
 class SSHConnectionViewSet(viewsets.ModelViewSet):
     queryset = SSHConnection.objects.all()
     serializer_class = SSHConnectionSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    # permission_classes = [permissions.IsAuthenticated]
 
 
 class S3ConnectionViewSet(viewsets.ModelViewSet):
     queryset = S3Connection.objects.all()
     serializer_class = S3ConnectionSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    # permission_classes = [permissions.IsAuthenticated]
 
 
 class DatabaseConnectionViewSet(viewsets.ModelViewSet):
@@ -32,7 +32,7 @@ class DatabaseConnectionViewSet(viewsets.ModelViewSet):
 class ConfigViewSet(viewsets.ModelViewSet):
     queryset = Config.objects.all()
     serializer_class = ConfigSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    # permission_classes = [permissions.IsAuthenticated]
 
     @action(methods=['POST'], detail=True)
     def build(self, request, **kwargs):

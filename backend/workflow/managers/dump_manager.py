@@ -10,6 +10,7 @@ from workflow.functions.get_paths import get_config_dump_folder_path, get_dump_f
 from workflow.functions.remove_local_file import remove_local_file
 from workflow.managers.dump_exception import DumpException
 from workflow.managers.s3_manager import S3Manager
+from workflow.managers.ssh_manager import SSHManager
 from workflow.managers.workflow_event_manager import WorkflowEventManager
 from workflow.models import Workflow
 
@@ -44,8 +45,7 @@ class DumpManager:
 
     def _create_dump(self):
         if self.config.ssh_connection:
-            file_path = None
-        #     file_path = SSHManager(self.config).process()
+            file_path = SSHManager(self.workflow).process()
         else:
             dump_folder_path = get_config_dump_folder_path(self.config)
             file_path = dump_folder_path / get_dump_filename()

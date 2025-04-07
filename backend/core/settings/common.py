@@ -1,8 +1,13 @@
+# https://github.com/bubaley/production-django-docker-example
+# version: 1.2.3 | Increase the version after changes from the template, this will make it easier to make new ones
+
 import datetime
 import sys
 from pathlib import Path
 
 import environ
+
+from core.utils.logger import init_logging
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
@@ -16,6 +21,9 @@ SECRET_KEY = env.str('SECRET_KEY')
 
 ALLOWED_HOSTS = env.list('ALLOWED_HOST', default=['*'])
 CORS_ORIGIN_WHITELIST = env.list('CORS_ORIGIN_WHITELIST', default=['http://localhost:5173'])
+
+LOGGING = init_logging(log_dir=BASE_DIR / 'data' / 'logs', debug=DEBUG)
+
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -31,6 +39,7 @@ INSTALLED_APPS = [
     'user',
     'config',
     'workflow',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [
@@ -48,7 +57,7 @@ MIDDLEWARE = [
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -60,6 +69,7 @@ TEMPLATES = [
         },
     },
 ]
+
 
 ROOT_URLCONF = 'core.urls'
 WSGI_APPLICATION = 'core.wsgi.application'
@@ -73,6 +83,9 @@ if env.str('SQL_ENGINE', None):
             'PASSWORD': env.str('SQL_PASSWORD'),
             'HOST': env.str('SQL_HOST'),
             'PORT': env.str('SQL_PORT'),
+            'TEST': {
+                'NAME': 'test_' + env.str('SQL_DATABASE'),  # database for tests
+            },
         }
     }
 else:
@@ -104,7 +117,7 @@ MEDIA_URL = 'media/'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': ('rest_framework_simplejwt.authentication.JWTAuthentication',),
     'DATETIME_FORMAT': '%Y-%m-%d %H:%M:%S',
-    'DEFAULT_PAGINATION_CLASS': 'core.utils.base_pagination.BasePagination',
+    'DEFAULT_PAGINATION_CLASS': 'core.utils.pagination.BasePagination',
     'DEFAULT_RENDERER_CLASSES': ('rest_framework.renderers.JSONRenderer',),
     'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',),
 }
@@ -120,17 +133,18 @@ AUTH_USER_MODEL = 'user.User'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 APPEND_SLASH = False
 
+CACHE_LOCATION_URL = env.str('CACHE_LOCATION_URL', None)
+backends = 'django.core.cache.backends'
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
-        'LOCATION': 'app_cache',
-        'TIMEOUT': 604800,
+        'BACKEND': f'{backends}.redis.RedisCache' if CACHE_LOCATION_URL else f'{backends}.db.DatabaseCache',
+        'LOCATION': CACHE_LOCATION_URL or 'app_cache',
+        'TIMEOUT': 86400 * 7,  # 7 days
     }
 }
 
-CELERY_BROKER_URL = env.str('BROKER_URL', None)
+CELERY_BROKER_URL = env.str('CELERY_BROKER_URL', None)
 CELERY_BACKEND_URL = env.str('CELERY_BACKEND_URL', None)
-CELERY_BEAT_ENABLED = env.str('CELERY_BEAT_ENABLED', False)
 
 # --- CUSTOM_SETTINGS ---
 CRYPTO_FIELD_KEY = env.str('CRYPTO_FIELD_KEY')

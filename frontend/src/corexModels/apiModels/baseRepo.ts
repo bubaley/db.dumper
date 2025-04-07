@@ -1,6 +1,6 @@
-import { BaseModel } from './baseModel';
-import { BaseModelApi } from './baseModelApi';
-import { BasePagination } from './basePagination';
+import { type BaseModel } from "./baseModel";
+import { BaseModelApi } from "./baseModelApi";
+import { BasePagination } from "./basePagination";
 
 export type BaseListConfig = {
   dontSetToItems?: boolean;
@@ -13,8 +13,8 @@ export type BaseListConfig = {
 abstract class BaseRepo<T extends BaseModel> {
   item: T | null = null;
   items: Array<T> = [];
+  routeKey?: string;
   pagination: BasePagination = BasePagination.empty();
-  loading = true;
   loadings = {
     list: false,
     retrieve: false,
@@ -26,16 +26,18 @@ abstract class BaseRepo<T extends BaseModel> {
   };
   abstract api: BaseModelApi<T>;
 
+  abstract defaultItem(): BaseModel;
+
   async list(
     params: Record<string, any> = {},
-    config: BaseListConfig = {},
+    config: BaseListConfig = {}
   ): Promise<{ pagination: BasePagination; items: Array<T> }> {
     let _params = params;
     _params = this.processParams(
       Object.assign(_params, {
         page: config.page || 1,
         page_size: config.pageSize || this.pagination.page_size,
-      }),
+      })
     );
 
     if (!config.dontSetToItems || config.setLoading) {
@@ -66,7 +68,7 @@ abstract class BaseRepo<T extends BaseModel> {
 
   async create(obj: T | null = null, dontSetToItem = false): Promise<T> {
     if (!obj && this.item) obj = this.item;
-    if (!obj) throw Error('Object does not exists');
+    if (!obj) throw Error("Object does not exists");
     this.loadings.create = true;
     this.loadings.save = true;
     const result = await this.api.create(obj.toJson());
@@ -78,8 +80,8 @@ abstract class BaseRepo<T extends BaseModel> {
 
   async update(obj: T | null = null, updateInItems = true): Promise<T> {
     if (!obj && this.item) obj = this.item;
-    if (!obj) throw Error('Object does not exists');
-    if (!obj.id) throw Error('Object does not has id.');
+    if (!obj) throw Error("Object does not exists");
+    if (!obj.id) throw Error("Object does not has id.");
     this.loadings.update = true;
     this.loadings.save = true;
     const result = await this.api.update(obj.id, obj.toJson());
@@ -94,14 +96,14 @@ abstract class BaseRepo<T extends BaseModel> {
   }
 
   async updateOrCreate(obj: T): Promise<{ created: boolean; item: T }> {
-    const method = obj.id ? 'update' : 'create';
+    const method = obj.id ? "update" : "create";
     this.item = await this[method](obj);
-    return { created: method === 'create', item: this.item };
+    return { created: method === "create", item: this.item };
   }
 
   async retrieve(
     id: number | string,
-    params: Record<string, any> = {},
+    params: Record<string, any> = {}
   ): Promise<T> {
     this.loadings.retrieve = true;
     this.item = await this.api.retrieve(id, this.processParams(params));
@@ -111,8 +113,8 @@ abstract class BaseRepo<T extends BaseModel> {
 
   async delete(obj: T | null = null, dontDeleteInItems = false): Promise<void> {
     if (!obj && this.item) obj = this.item;
-    if (!obj) throw Error('Object does not exists');
-    if (!obj.id) throw Error('Object does not has id.');
+    if (!obj) throw Error("Object does not exists");
+    if (!obj.id) throw Error("Object does not has id.");
     this.loadings.retrieve = true;
     await this.api.delete(obj.id);
     if (this.item?.id === obj.id) this.item = null;
@@ -128,7 +130,7 @@ abstract class BaseRepo<T extends BaseModel> {
       Object.assign(params, {
         page: config.page || 1,
         page_size: config.pageSize || this.pagination.page_size,
-      }),
+      })
     );
     return { params };
   }
@@ -138,7 +140,7 @@ abstract class BaseRepo<T extends BaseModel> {
     for (const key of keys) {
       if (Array.isArray(params[key])) {
         const value = params[key];
-        params[key] = value.join(',');
+        params[key] = value.join(",");
       }
     }
     return params;

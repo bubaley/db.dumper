@@ -1,4 +1,4 @@
-import {WorkflowEvent, WorkflowEventRaw} from './workflowEvent.ts';
+import {WorkflowEvent, type WorkflowEventRaw} from './workflowEvent.ts';
 import {BaseModelApi} from "../../corexModels/apiModels/baseModelApi.ts";
 
 

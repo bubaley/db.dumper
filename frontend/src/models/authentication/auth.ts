@@ -1,4 +1,4 @@
-import { BaseModel } from 'src/corexModels/apiModels/baseModel'
+import type {BaseModel} from "../../corexModels/apiModels/baseModel.ts";
 
 export type AuthenticationRaw = {
   id: number | string | undefined

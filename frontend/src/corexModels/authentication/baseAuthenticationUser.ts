@@ -1,4 +1,4 @@
-import { BaseModel } from '../apiModels/baseModel';
+import { type BaseModel } from '../apiModels/baseModel';
 
 export type BaseAuthenticationUserRaw = {
   id: number | undefined

@@ -1,13 +1,15 @@
-import { AxiosResponse } from 'axios';
-
-import { BaseAuthenticationTokens, TokensRaw } from './baseAuthenticationTokens';
-import moment from 'moment';
+import {
+  BaseAuthenticationTokens,
+  type TokensRaw,
+} from "./baseAuthenticationTokens";
+import moment from "moment";
 import {
   BaseAuthenticationUser,
-  BaseAuthenticationUserRaw
-} from './baseAuthenticationUser';
-import { reactive } from 'vue';
-import {api} from "../../boot/axios.ts";
+  type BaseAuthenticationUserRaw,
+} from "./baseAuthenticationUser";
+import { reactive } from "vue";
+import type { AxiosResponse } from "axios";
+import { api } from "../../boot/axios.ts";
 
 export class BaseAuthentication {
   user: BaseAuthenticationUser | null = null;
@@ -18,16 +20,16 @@ export class BaseAuthentication {
 
   settings = {
     urls: {
-      login: 'token/',
-      me: '/users/me/',
-      register: '/users/',
-      refresh: '/token/refresh/',
-      changePassword: '/users/change_password/'
+      login: "token/",
+      me: "/users/me/",
+      register: "/users/",
+      refresh: "/token/refresh/",
+      changePassword: "/users/change_password/",
     },
     apiHeader: {
-      key: 'Authorization',
-      type: 'Bearer'
-    }
+      key: "Authorization",
+      type: "Bearer",
+    },
   };
 
   constructor() {
@@ -36,7 +38,7 @@ export class BaseAuthentication {
   }
 
   async me() {
-    if (!this.tokens.accessIsValid) throw Error('Access token is not valid.');
+    if (!this.tokens.accessIsValid) throw Error("Access token is not valid.");
     this.user = await this._loadUser();
     return this.user;
   }
@@ -65,10 +67,10 @@ export class BaseAuthentication {
       this.user = await this._loadUser();
       return {
         user: this.user,
-        tokens: this.tokens
+        tokens: this.tokens,
       };
     } catch (e) {
-      throw Error('Fail login');
+      throw Error("Fail login");
     }
   }
 
@@ -78,7 +80,7 @@ export class BaseAuthentication {
       await api.post(this.settings.urls.register, data);
       return await this.login(data);
     } catch (e) {
-      throw Error('Register fail');
+      throw Error("Register fail");
     }
   }
 
@@ -86,7 +88,7 @@ export class BaseAuthentication {
     try {
       return await api.post(this.settings.urls.changePassword, data);
     } catch (e) {
-      throw Error('Change password fail');
+      throw Error("Change password fail");
     }
   }
 
@@ -102,7 +104,7 @@ export class BaseAuthentication {
     Object.assign(api.defaults.headers, {
       [apiHeader.key]: apiHeader.type
         ? `${apiHeader.type} ${this.tokens.access}`
-        : this.tokens.access
+        : this.tokens.access,
     });
   }
 
@@ -110,7 +112,7 @@ export class BaseAuthentication {
     let shouldRefresh = false;
     if (this.tokens.access) {
       const date = this.tokens.getJwtData(this.tokens.access).date;
-      if (moment.utc().add('1', 'day') >= date) {
+      if (moment.utc().add("1", "day") >= date) {
         shouldRefresh = true;
       }
     } else shouldRefresh = true;
@@ -126,7 +128,7 @@ export class BaseAuthentication {
       );
       return new this.userClass(response.data);
     } catch (e) {
-      throw Error('Fail with load user.');
+      throw Error("Fail with load user.");
     }
   }
 }

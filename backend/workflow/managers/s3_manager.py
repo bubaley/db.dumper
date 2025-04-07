@@ -25,13 +25,18 @@ class S3Manager:
         self._e.add_event(name='S3_CONNECTED')
         try:
             s3_path = self.get_s3_path(file_path.name)
+            # self._client
             self._client.upload_file(file_path, self._s3.bucket, s3_path)
             self._e.add_event('S3_DUMP_UPLOADED', f'Filename: "{file_path.name}"')
-            if remove_local_file(file_path):
-                self._e.add_event('S3_LOCAL_DUMP_REMOVED', f'Filename: "{file_path.name}"')
+            self._remove_local_file(file_path)
         except (NoCredentialsError, EndpointConnectionError) as e:
+            self._remove_local_file(file_path)
             raise DumpException(name='S3_CONNECTION_ERROR', text=str(e))
         self._remove_old_files()
+
+    def _remove_local_file(self, file_path):
+        if remove_local_file(file_path):
+            self._e.add_event('S3_LOCAL_DUMP_REMOVED', f'Filename: "{file_path.name}"')
 
     def _remove_old_files(self):
         response = self._client.list_objects_v2(Bucket=self._s3.bucket, Prefix=self.get_s3_path('dump_'))
@@ -47,7 +52,7 @@ class S3Manager:
             self._e.add_event('S3_REMOVED_OLD_DUMPS', text=f'Count: {deleted_count}')
 
     def get_s3_path(self, filename: str = None):
-        s3_path = self.config.name
+        s3_path = self.config.key
         if self._s3.root:
             s3_path = f'{self._s3.root}/{s3_path}'
         if filename:

@@ -23,13 +23,14 @@ class S3Connection(models.Model):
 
 
 class DatabaseConnection(models.Model):
-    class Type(models.Choices):
+    class Type(models.TextChoices):
         POSTGRES = 'postgres'
+        DOCKER_POSTGRES = 'docker_postgres'
 
     type = models.CharField(max_length=32, choices=Type.choices)
     db = models.CharField(max_length=255)
-    host = models.CharField(max_length=255)
-    port = models.IntegerField()
+    host = models.CharField(max_length=255, null=True)
+    port = models.IntegerField(null=True)
     user = CryptoField()
     password = CryptoField()
 
@@ -41,3 +42,4 @@ class Config(models.Model):
     s3_connection = models.ForeignKey('S3Connection', on_delete=models.SET_NULL, null=True, related_name='configs')
     database_connection = models.OneToOneField('DatabaseConnection', on_delete=models.CASCADE, related_name='configs')
     max_versions = models.IntegerField(default=3)
+    auto_build = models.BooleanField(default=False)

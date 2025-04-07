@@ -1,40 +1,42 @@
 x-restart-policy: &restart_policy
   restart: unless-stopped
+x-healthcheck-defaults: &healthcheck_defaults
+  interval: 5s
+  timeout: 5s
+  retries: 10
+  start_period: 30s
 x-app-defaults: &app_defaults
   <<: *restart_policy
+  stop_grace_period: "3s"
   volumes:
     - ./data:/app/data
   depends_on:
-    - redis
-    - db
+    redis:
+      condition: service_healthy
 services:
   app:
     <<: *app_defaults
     build: .
-    command: sh scripts/start_app.sh
+    command: make gunicorn
     ports:
       - "${ENTRY_PORT:-15000}:8000"
+    healthcheck:
+      <<: *healthcheck_defaults
+      test: [ "CMD-SHELL", "wget -q --spider http://0.0.0.0:8000/api/v1/ready || exit 1" ]
   celery:
     <<: *app_defaults
     build: .
-    command: sh scripts/start_celery.sh
+    command: make celery
+    depends_on:
+      app:
+        condition: service_healthy
   redis:
     <<: *restart_policy
     image: redis:7.4.1-alpine
-  db:
-    <<: *restart_policy
-    image: postgres:17.0-alpine3.20
     volumes:
-      - postgres_data:/var/lib/postgresql/data/
-    environment:
-      POSTGRES_DB: ${SQL_DATABASE:-postgres}
-      POSTGRES_USER: ${SQL_USER:-postgres}
-      POSTGRES_PASSWORD: ${SQL_PASSWORD:-postgres}
-    command: >
-      postgres
-      -c max_connections=${SQL_MAX_CONNECTIONS:-100}
-      -c shared_buffers=${SQL_SHARED_BUFFERS:-128MB}
-      -c work_mem=${SQL_WORK_MEM:-4MB}
-      -c effective_cache_size=${SQL_EFFECTIVE_CACHE_SIZE:-4GB}
+      - redis_data:/data
+    healthcheck:
+      <<: *healthcheck_defaults
+      test: [ "CMD", "redis-cli", "ping" ]
 volumes:
-  postgres_data:
+  redis_data:
