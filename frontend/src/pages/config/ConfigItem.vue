@@ -100,7 +100,7 @@ const build = async () => {
           <label for="on_label">SSH Подключение</label>
         </FloatLabel>
         <FloatLabel variant="on">
-          <InputNumber id="on_label" v-model="configRepo.item.maxVersions" />
+          <InputNumber :use-grouping="false" id="on_label" v-model="configRepo.item.maxVersions" />
           <label for="on_label">Количество версий</label>
         </FloatLabel>
         <div class="flex items-center gap-4">
@@ -135,6 +135,7 @@ const build = async () => {
           v-if="configRepo.item.databaseConnection.type === 'postgres'"
         >
           <InputNumber
+            :use-grouping="false"
             id="on_label"
             v-model="configRepo.item.databaseConnection.port"
           />
