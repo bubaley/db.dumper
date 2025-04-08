@@ -39,7 +39,7 @@ class SSHManager:
         self.ssh_connection = self._get_ssh_connection()
         tmp_path = self._get_tmp_folder_path()
         self._remove_obsolete_files(tmp_path)
-        filename = get_dump_filename()
+        filename = get_dump_filename(self.config)
         file_path = str(Path(tmp_path, filename))
         self._e.add_event(name='SSH_DUMP_INIT', text=f'file_path: {file_path}')
         cmd = get_dump_command(self.config, file_path=file_path)

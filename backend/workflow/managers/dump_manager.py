@@ -50,7 +50,7 @@ class DumpManager:
             file_path = SSHManager(self.workflow).process()
         else:
             dump_folder_path = get_config_dump_folder_path(self.config)
-            file_path = dump_folder_path / get_dump_filename()
+            file_path = dump_folder_path / get_dump_filename(self.config)
             cmd = get_dump_command(self.config, file_path)
             self._e.add_event('DUMP_STARTED')
             subprocess.run(cmd, shell=True, check=True)
