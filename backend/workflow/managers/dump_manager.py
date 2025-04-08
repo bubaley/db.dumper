@@ -5,7 +5,7 @@ import zipfile
 from pathlib import Path
 
 from workflow.functions.get_dump_command import get_dump_command
-from workflow.functions.get_file_size import get_file_size
+from workflow.functions.get_file_size import get_file_size, get_file_size_label_by_path
 from workflow.functions.get_paths import get_config_dump_folder_path, get_dump_filename
 from workflow.functions.remove_local_file import remove_local_file
 from workflow.managers.dump_exception import DumpException
@@ -35,6 +35,8 @@ class DumpManager:
     def _process(self):
         self._e.set_status(status=Workflow.Status.IN_PROGRESS)
         file_path = self._create_dump()
+        self.workflow.size = get_file_size(file_path)
+        self.workflow.save(update_fields=('size',))
         if self.config.s3_connection:
             S3Manager(self.workflow).process(file_path)
         self._remove_old_files()
@@ -52,7 +54,9 @@ class DumpManager:
             cmd = get_dump_command(self.config, file_path)
             self._e.add_event('DUMP_STARTED')
             subprocess.run(cmd, shell=True, check=True)
-            self._e.add_event('DUMP_CREATED', f'Filename: "{file_path.name}" size: {get_file_size(file_path)}')
+            self._e.add_event(
+                'DUMP_CREATED', f'Filename: "{file_path.name}" size: {get_file_size_label_by_path(file_path)}'
+            )
 
             file_path = self._archive_dump(file_path)
         return file_path
@@ -64,7 +68,9 @@ class DumpManager:
         filename = archive_file_path.name
         with zipfile.ZipFile(archive_file_path, 'w', zipfile.ZIP_DEFLATED) as zip_f:
             zip_f.write(file_path, os.path.basename(file_path))
-        self._e.add_event('DUMP_ARCHIVED', text=f'Filename: "{filename}" size: {get_file_size(archive_file_path)}')
+        self._e.add_event(
+            'DUMP_ARCHIVED', text=f'Filename: "{filename}" size: {get_file_size_label_by_path(archive_file_path)}'
+        )
         remove_local_file(file_path)
         self._e.add_event('UNARCHIVED_DUMP_REMOVED', text=f'Filename: "{file_path.name}"')
         return archive_file_path

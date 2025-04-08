@@ -1,5 +1,7 @@
 from django.db import models
 
+from workflow.functions.get_file_size import get_file_size_label
+
 
 class Workflow(models.Model):
     class Storage(models.TextChoices):
@@ -20,10 +22,15 @@ class Workflow(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     created_by = models.ForeignKey('user.User', on_delete=models.SET_NULL, null=True)
     active = models.BooleanField(default=False)
+    size = models.BigIntegerField(null=True)
     storage = models.CharField(choices=Storage.choices, max_length=16)
 
     class Meta:
         ordering = ['-created_at']
+
+    @property
+    def size_label(self):
+        return get_file_size_label(self.size)
 
 
 class WorkflowEvent(models.Model):

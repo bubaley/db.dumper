@@ -9,6 +9,7 @@ export type WorkflowRaw = {
   config?: ConfigRaw;
   created_at?: string;
   storage?: string;
+  size_label?: string;
 };
 
 export class Workflow implements BaseModel {
@@ -19,6 +20,7 @@ export class Workflow implements BaseModel {
   createdAt: string | null;
   config: Config;
   storage: string;
+  sizeLabel: string;
 
   constructor(raw: WorkflowRaw) {
     this.id = raw.id;
@@ -28,6 +30,7 @@ export class Workflow implements BaseModel {
     this.status = raw.status || "";
     this.createdAt = raw.created_at || null;
     this.config = new Config(raw.config || {});
+    this.sizeLabel = raw.size_label || "";
   }
 
   toJson(): Record<string, any> {

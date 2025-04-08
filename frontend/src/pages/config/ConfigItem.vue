@@ -172,6 +172,7 @@ const build = async () => {
           @row-click="loadWorkflowHistory($event.data)"
         >
           <Column field="filename" header="Ссылка"></Column>
+          <Column field="sizeLabel" header="Размер"></Column>
           <Column field="status" header="Статус"></Column>
           <Column field="createdAt" header="Дата создания"></Column>
           <Column field="active" header="Активен"></Column>

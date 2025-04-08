@@ -67,12 +67,7 @@ class S3Manager:
         response = self._client.list_objects_v2(Bucket=self._s3.bucket, Prefix=prefix)
         if 'Contents' in response:
             return self._client.generate_presigned_url(
-                'get_object',
-                Params={
-                    'Bucket': self._s3.bucket,
-                    'Key': prefix
-                },
-                ExpiresIn=7200
+                'get_object', Params={'Bucket': self._s3.bucket, 'Key': prefix}, ExpiresIn=7200
             )
         return None
 

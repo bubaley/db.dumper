@@ -10,7 +10,18 @@ class WorkflowSerializer(AirModelSerializer):
 
     class Meta:
         model = Workflow
-        fields = ('id', 'filename', 'active', 'storage', 'config', 'status', 'created_at', 'created_by')
+        fields = (
+            'id',
+            'filename',
+            'active',
+            'storage',
+            'config',
+            'status',
+            'created_at',
+            'created_by',
+            'size',
+            'size_label',
+        )
 
 
 class WorkflowEventSerializer(AirModelSerializer):
