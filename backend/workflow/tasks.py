@@ -1,4 +1,5 @@
 from celery import shared_task
+from django.core.management import call_command
 
 from config.models import Config
 from core.celery.celery_enums import CeleryTasks
@@ -24,14 +25,6 @@ def workflow_init(**kwargs):
     DumpManager(workflow).process()
 
 
-@shared_task(name=CeleryTasks.CONFIG_BUILD)
-def config_build(**kwargs):
-    active_configs = Workflow.objects.filter(status__in=Workflow.ACTIVE_STATUSES).values_list('config', flat=True)
-    configs = Config.objects.filter(auto_build=True).exclude(id__in=active_configs)
-    Logg.info(e='config.build', msg=f'Got {len(configs)} configs')
-    for config in configs:
-        workflow = WorkflowEventManager.build_workflow(
-            config=config,
-            user=None,
-        )
-        workflow_init.delay(config_key=config.key, workflow_id=workflow.id)
+@shared_task(name=CeleryTasks.CONFIG_BUILD_WORKFLOWS)
+def config_build_workflows(**kwargs):
+    call_command('build_workflows')

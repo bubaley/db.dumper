@@ -18,7 +18,7 @@ task_routes = {
 
 beat_schedule = {
     'example': {
-        'task': CeleryTasks.CONFIG_BUILD,
+        'task': CeleryTasks.CONFIG_BUILD_WORKFLOWS,
         'schedule': crontab(hour=3, minute=0),
     },
 }

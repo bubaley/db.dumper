@@ -9,4 +9,4 @@ class CeleryTaskQueues(enum.StrEnum):
 
 class CeleryTasks(enum.StrEnum):
     WORKFLOW_INIT = 'workflow.init'
-    CONFIG_BUILD = 'config.build'
+    CONFIG_BUILD_WORKFLOWS = 'config.build_workflows'
