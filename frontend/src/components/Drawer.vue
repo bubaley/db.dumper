@@ -29,7 +29,7 @@ const items = ref([
     class="w-auto h-screen p-5 bg-surface-50 dark:bg-surface-900 h-full flex flex-col justify-between"
   >
     <div class="w-12 flex flex-col items-center">
-      <div class="font-medium">dump</div>
+      <div class="font-medium">dumper</div>
       <div class="mt-10 flex flex-col gap-2">
         <div
           v-for="(el, index) in items"

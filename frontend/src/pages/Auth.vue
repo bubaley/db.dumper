@@ -37,7 +37,7 @@ const auth = async () => {
         <div
           class="text-surface-900 dark:text-surface-0 text-3xl font-medium mb-4"
         >
-          dump
+          dumper
         </div>
         <span
           class="text-surface-600 dark:text-surface-200 font-medium leading-normal"
